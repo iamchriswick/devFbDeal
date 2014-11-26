@@ -1,0 +1,139 @@
+{# ------------------------------------------------------- #}
+
+{# MOBILE ACTIVATION PAGE #}
+
+{# Webhook uses the SWIG.js (like Djagno/Twig) templating system. Their documentation is here: #}
+{# http://paularmstrong.github.io/swig/docs/tags/ #}
+
+{# Learn about calling data into Webhook pages here: #}
+{# http://www.webhook.com/docs/template-rules-and-filters/ #}
+
+{# ------------------------------------------------------- #}
+
+{# Confused what extends and blocks do? Watch a primer: #}
+{# http://www.webhook.com/docs/template-inheritance-blocks/ #}
+{% extends "templates/partials/base.html" %}
+
+{# You can copy/paste this line to any page on your site to access the facebookdeal data. #}
+{% set item = get('facebookdeal') %}
+
+{# This sets our page <title>. It will append this facebookdeal's name to the site title defined in base.html #}
+{% block title %}{% parent %} - {{ item.name }}{% endblock %}
+{% block head_extra %}
+    <!-- build:css static/css/mobile.min.css -->
+    <link rel="stylesheet" href="/static/css/mobile.css" />
+    <!-- endbuild -->
+{% endblock %}
+{% block content %}
+    {# Webhook Global Values #}
+    <input type="hidden" name="siteName" id="siteName" value="{{ getSetting('site_name') }}">
+    <input type="hidden" name="siteUrl" id="siteUrl" value="{{ getSetting('site_url') }}">
+    <input type="hidden" name="appId" id="appId" value="{{ getSetting('site_facebook') }}">
+
+    {# Webhook Content Type Values #}
+    <input type="hidden" name="dealName" id="dealName" value="{{ item.name }}">
+    <input type="hidden" name="dealHeader" id="dealHeader" value="{{ item.deal_header }}">
+    <input type="hidden" name="dealLimitationValue" id="dealLimitationValue" value="{{ item.aktiveringsbegrensning }}">
+    <input type="hidden" name="dealLimitationHours" id="dealLimitationHours" value="{{ item.antall_timer }}">
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Aktivering av Dealen</h4>
+                </div>
+                <div class="modal-body">
+                    Før du går videre ber vi deg sørge for at personalet er til stede for å følge med under aktiveringen.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-block" id="activateThisDeal">Aktiver Dealen</button>
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal">Avbryt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="header-10">
+        <div class="container">
+            <div class="row">
+                <div class="navbar col-sm-12" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle"></button>
+                        <span class="brand">En deal fra {{ item.bedriftsnavn }}</span>
+                    </div>
+                    <div class="collapse navbar-collapse pull-right">
+                        <ul class="nav pull-left">
+                            <li><p>Lyst til å prøve FacebookDeal<br>for din bedrift?</p></li>
+                        </ul>
+                        <form class="navbar-form pull-left">
+                            <a class="btn btn-success btn-block" href="http://presentasjoner.viralmedia.no/facebookdeal/" target="_blank" id="tellmemore"><span class="fui-export"> </span> Les mer her</a>
+                        </form>
+                        <div id="footer">
+                            <p>Denne løsningen er levert av<br>
+                            <a href="http://www.viralmedia.no/" target="_blank">Viral Media AS</a><br>
+                            <span>2014 &copy; Christian Wick</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-background"></div>
+    </header>
+    <section class="desktop">
+        <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/iPhone@2x.png">
+        <h1>Denne siden er kun tiljengelig på mobil</h1>
+    </section>
+    <section class="orentationlock">
+        <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/lock@2x.png">
+    </section>
+    <section class="header-17-sub text-center bg-midnight-blue">
+        <div class="background"></div>
+        <div class="container">
+            <div class="row" id="sectionFacebookLogin">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <a class="btn btn-huge btn-block btn-facebook" href="javascript:void(0)" id="fbLogin"><span class="fui-facebook"> </span> Autentiser med Facebook</a>
+                    <div class="alert alert-danger" style="display: none;">
+                      <h4>Beklager!</h4>
+                      <p></p>
+                    </div>
+                    <div class="alert alert-info" style="display: none;">
+                    <p><strong>TIL INFO: </strong><span></span></p>
+                    </div>
+                    {# <a class="btn btn-huge btn-block btn-activate" href="javascript:void(0)" id="btnActivate" style="display: none;"><span class="fui-check"> </span> Aktiver denne dealen</a> #}
+                    <button type="button" class="btn btn-huge btn-block btn-activate" data-toggle="modal" data-target="#myModal" id="btnActivate" style="display: none;">
+                        <span class="fui-check"> </span> Aktiver denne dealen
+                    </button>
+                    <div class="alert alert-warning" style="display: none;">
+                      <h4>Beklager!</h4>
+                      <p>Du har ikke bestilt denne dealen.</p>
+                    </div>
+                    <div id="confirmation" style="display: none;">
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <h1>Gratulerer!</h1>
+                            <h4>Du har aktivert</h4>
+                            <h3>{{ item.name }}</h3>
+                            <h5>{{ item.deal_header }}</h5>
+                            <p>Vi takker for <em>handelen</em> og ønsker deg hjertelig velkommen tilbake til<br>{{ item.bedriftsnavn }}.</p>
+                        </div>
+                    </div>
+                    <a class="btn btn-huge btn-block btn-order" href="{{ getSetting('site_twitter') }}" id="btnOrder" style="display: none;"><span class="fui-tag"> </span> <span class="text">Trykk her for å bestille dealen</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content-31">
+        <div class="instructions">
+            <img src="//cloudcdn.viralapps.no/images/mobile-activation-instructions.png">
+        </div>
+    </section>
+
+{% endblock %}
+{% block body_extra %}
+<script src="//apis.google.com/js/client.js"></script>
+<script src="//cloudcdn.viralapps.no/libraries/jQuery-URL-shortener/jquery.urlshortener.min.js"></script>
+
+<!-- build:js /static/javascript/mobile.min.js -->
+<script src="/static/javascript/mobile.js"></script>
+<!-- endbuild -->
+{% endblock %}

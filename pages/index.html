@@ -1,0 +1,273 @@
+{# ------------------------------------------------------- #}
+
+{# YOUR HOMEPAGE #}
+
+{# Webhook uses the SWIG.js (like Djagno/Twig) templating system. Their documentation is here: #}
+{# http://paularmstrong.github.io/swig/docs/tags/ #}
+
+{# Learn about calling data into Webhook pages here: #}
+{# http://www.webhook.com/docs/template-rules-and-filters/ #}
+
+{# ------------------------------------------------------- #}
+
+{# Confused what extends and blocks do? Watch a primer: #}
+{# http://www.webhook.com/docs/template-inheritance-blocks/ #}
+{% extends "templates/partials/base.html" %}
+
+{# You can copy/paste this line to any page on your site to access the facebookdeal data. #}
+{% set item = get('facebookdeal') %}
+
+{# This sets our page <title>. It will append this facebookdeal's name to the site title defined in base.html #}
+{% block title %}{% parent %} - {{ item.name }}{% endblock %}
+{% block head_extra %}
+    <meta property="og:url" content="{{ getSetting('site_twitter') }}">
+    <meta property="og:title" content="{{ item.name }}">
+    <meta property="og:description" content="{{ item.deal_header }}">
+    <meta property="og:image" content="{{ item.bilde_av_dealen.url }}">
+    {# Put your CSS in here and we'll minify it into one file. No CDN scripts. More info:
+    http://www.webhook.com/docs/minify-your-js-and-css/ #}
+    <!-- build:css static/css/app.min.css -->
+    <link rel="stylesheet" href="/static/css/app.css" />
+    <link rel="stylesheet" href="/static/css/wysiwyg_figures.css" />
+    <!-- endbuild -->
+{% endblock %}
+{% block content %}
+{# Webhook Global Values #}
+    <input type="hidden" name="siteName" id="siteName" value="{{ getSetting('site_name') }}">
+    <input type="hidden" name="siteUrl" id="siteUrl" value="{{ getSetting('site_url') }}">
+    <input type="hidden" name="appId" id="appId" value="{{ getSetting('site_facebook') }}">
+
+    {# Webhook Content Type Values #}
+    <input type="hidden" name="dealName" id="dealName" value="{{ item.name }}">
+    <input type="hidden" name="dealHeader" id="dealHeader" value="{{ item.deal_header }}">
+    <input type="hidden" name="dealFriendInvitesNeeded" id="dealFriendInvitesNeeded" value="{{ item.antall_inviterte }}">
+    <input type="hidden" name="dealActiveValue" id="dealActiveValue" value="{{ item.tidsbegrensning }}">
+    <input type="hidden" name="dealActiveToTimestamp" id="dealActiveToTimestamp" value="{{ item.gyldig_til_dato__tidspunkt|date('U') }}">
+    <section class="orentationlock">
+        <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/lock@2x.png">
+    </section>
+    <div id="sectionFacebookLogin">
+        <header class="header-13">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <img class="brand" src="{{ item.firmalogo.url }}" height="100px" />
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="header-13-sub v-center bg-midnight-blue ">
+            <div>
+                <div class="background">&nbsp;</div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-1">
+                            <h3>{{ item.name }}</h3>
+                            <p class="lead">{{ item.deal_header }}</p>
+                            <br>
+                            <div id="fbLoginContainer" style="display: none;">
+                                    <a href="javascript:void(0)" id="fbLogin" class="btn btn-hg btn-wide btn-social-facebook"><span class="fui-facebook"></span> Dealen får du her</a>
+                                    {# <a href="javascript:void(0)" id="fbLogin" class="btn btn-hg btn-wide btn-social-facebook" data-provider="facebook"><span class="fui-facebook"></span> Dealen får du her</a> #}
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-sm-offset-1">
+                            <div id="iPhone">
+                                <div id="iPhoneCasing">
+                                    <img src="//cloudcdn.viralapps.no/images/devices/iPhone6.png" class="hidden-xs" alt="">
+                                </div>
+                                <div id="iPhoneBackdrop" style="background-image: url('{{ item.bilde_av_dealen.url }}')"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="offerExpired">
+        <header class="header-13">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <img class="brand" src="{{ item.firmalogo.url }}" height="100px" width="auto" />
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="header-13-sub v-center bg-midnight-blue ">
+            <div>
+                <div class="background">&nbsp;</div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-1">
+                            <h3>{{ item.name }}</h3>
+                            <p class="lead">Beklager, tilbudet er utløpt...<br>
+                            Vi kommer snart med en ny deal, så følg med på vår Facebook-side for oppdateringer.</p>
+                        </div>
+                        <div class="col-sm-4 col-sm-offset-1">
+                            <div id="iPhone">
+                                <div id="iPhoneCasing">
+                                    <img src="//cloudcdn.viralapps.no/images/devices/iPhone6.png" class="hidden-xs" alt="">
+                                </div>
+                                <div id="iPhoneBackdrop" style="background-image: url('{{ item.bilde_av_dealen.url }}')"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="sectionInviteFriends">
+        <section class="content-28 bg-clouds">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <h3 class="dealName">{{ item.name }}</h3>
+                        <p class="lead">{{ item.deal_header }}</p>
+                        <div class="dealDescription">{{ item.deal_beskrivelse|safe }}</div>
+                        <p class="terms"><i><small>{{ item.vilkar_og_betingelser }}</small></i></p>
+                        <div id="dealPicture">
+                            <div id="pictureFrameImage" style="background-image: url('{{ item.bilde_av_dealen.url }}')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="content-10 instructions">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <h3>Slik får du tillgang til denne dealen</h3>
+                        <p class="lead">Det tar deg kun 2 minutter</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="features">
+                            <div class="box">
+                                <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/rss@2x.png" width="100" height="100" alt="">
+                                <h6>Inviter dine Facebook-venner</h6>
+                                <p>For å få tillgang til denne dealen må du invitere noen venner fra Facebook til denne dealen. Denne dealen krever at du
+                                    <strong>inviterer minst
+                                        <span id="friendsToInvite"></span> av din Facebook-venner</strong>, men du kan selvfølgelig invitere så mange du vil.</p>
+                            </div>
+                            <div class="box">
+                                <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/pc@2x.png" width="100" height="100" alt="">
+                                <h6>Fyll inn personalia</h6>
+                                <p>For å få tillgang til dealen ber vi deg også om å fylle inn ditt navn, epost adresse og mobilnummer. Mobilnummer må være riktig, da vi trenger det for å kunne sende deg dealen på sms.</p>
+                            </div>
+                            <div class="box">
+                                <img src="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/icons/PNG/@2x/ticket@2x.png" width="100" height="100" alt="">
+                                <h6>Aktiver dealen med din mobiltelefon</h6>
+                                <p>Du mottar en sms med link til dealen. Linken åpnes i din nettleser på mobilen og du logger inn med Facebook for å hente ut din deal. Det er viktig at du IKKE aktiverer dealen før personalet, der du skal løse den inn, ber deg om det.</p>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="response" class="alert alert-warning alert-dismissible" role="alert" style="display: none;">
+                            <strong>Warning!</strong>
+                            <span class="warning"></span>
+                        </div>
+                        <div id="response" class="alert alert-success alert-dismissible" role="alert" style="display: none;">
+                            <strong>Success!</strong>
+                            <span class="success"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <a href="javascript:void(0)" class="btn btn-hg btn-wide btn-block btn-success fbInvite" data-provider="facebook">
+                            <span class="fui-user"></span>
+                            Trykk her for å inviter dine venner
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <section class="contacts-2" id="sectionUserPersonalia">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <h3>Takk for at du inviterte dine venner</h3>
+                    <p class="lead">Fyll inn din informasjon og vi sender deg dealen</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="dealUserPersonalia">
+                        <div class="form-group">
+                            <label class="h6">Navn</label>
+                            <input type="text" name="dealUserName" id="dealUserName" class="form-control" READONLY>
+                        </div>
+                        <div class="form-group">
+                            <label class="h6">Epostadresse</label>
+                            <input type="text" name="dealUserEmail" id="dealUserEmail" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="h6">Mobilnummer</label>
+                            <input type="text" name="dealUserPhone" id="dealUserPhone" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10 col-sm-offset-1">
+                                <button type="submit" class="btn btn-hg btn-block btn-info">
+                                    <span class="fui-mail"></span>
+                                    Send inn og motta denne dealen på sms
+                                </button>
+                            </div>
+                        </div>
+                        <p><small>Informasjonen blir kun brukt av {{ getSetting('site_name') }} og gis ikke videre til andre.</small></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content-3" id="sectionThankYou">
+        <div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <h3>Dealen er nå sendt til deg</h3>
+                        <p class="lead">{{ item.thank_you_header }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 aligment">
+                        {# <h3>{{ item.thank_you_header }}</h3> #}
+                        <h5>
+                            Du vil nå motta en SMS på <span id="responsePhoneValue">mobilnummer</span> med link til dealen og instrukser for aktivering.
+                        </h5>
+                        <h6><span>Vi ønsker deg velkommen til</span> <strong>{{ getSetting('site_name') }}</strong></h6>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="img">
+                            <img src="{{ item.bilde_av_dealen.url }}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="sectionFooter">
+        <footer class="footer-12">
+            <div class="container">
+                Laget med
+                <span class="fui-heart"></span> av Viral Media
+            </div>
+        </footer>
+        <footer class="footer-15">
+            <div class="container">
+                <small>Ønsker du din egen deal på Facebook? <a class="text-info" href="http://presentasjoner.viralmedia.no/facebookdeal/" target="_blank">Les mer på Facebookdeal.no</a>
+                </small>
+            </div>
+        </footer>
+    </section>
+{% endblock %}
+{% block body_extra %}
+<script src="//apis.google.com/js/client.js"></script>
+<script src="//cloudcdn.viralapps.no/libraries/jQuery-URL-shortener/jquery.urlshortener.min.js"></script>
+<!-- build:js /static/javascript/app.min.js -->
+<script src="/static/javascript/app.js"></script>
+<!-- endbuild -->
+{% endblock %}

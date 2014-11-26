@@ -1,0 +1,108 @@
+{# ------------------------------------------------------- #}
+
+{# YOUR BASE TEMPLATE. EVERYTHING GETS LOADED INTO THIS PAGE. #}
+{# Webhook uses the SWIG.js (like Djagno/Twig) templating system. Their documentation is here: #}
+{# http://paularmstrong.github.io/swig/docs/tags/ #}
+
+{# Learn about calling data into Webhook pages here: #}
+{# http://www.webhook.com/docs/template-rules-and-filters/ #}
+
+{# ------------------------------------------------------- #}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="no">
+<!--<![endif]-->
+
+{# Grab the title and description from the CMS general settings. #}
+{# {% set site_title = getSetting('site_name')%} {% set site_description = getSetting('site_description')%} #}
+
+{# You can copy/paste this line to any page on your site to access the facebookdeal data. #}
+{% set item = get('facebookdeal') %}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{ getSetting('site_name') }} – {{ item.name }}</title>
+    <meta name="description" content="{{ item.deal_header }}">
+    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="static/img/favicon.ico">
+    <link rel="apple-touch-icon icon-precomposed" href="/static/img/apple-touch-icon.png" />
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//cloudcdn.viralapps.no/frameworks/bootstrap/v3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cloudcdn.viralapps.no/frameworks/flat-ui-pro/v1.3.1/dist/css/flat-ui-pro.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/css/bootstrapvalidator.css">
+    <link rel="stylesheet" href="/static/startup/v1.3.1/common-files/css/icon-font.css">
+    <link rel="stylesheet" href="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/css/animations.css">
+
+    {# Useful block for loading outside head scripts in other pages. #}
+    {% block head_extra %}{% endblock %}
+</head>
+    <body>
+        <div class="page-wrapper">
+            {% block body %}
+            <!--[if lt IE 7]>
+                <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+              <![endif]-->
+
+            <!-- Custom headers appear here. -->
+            {% include "templates/partials/header.html" %}
+
+            <!-- By default, your inner pages will load into this block. -->
+            {% block content %}{% endblock %}
+
+            <!-- Custom footers appear here. -->
+            {% include "templates/partials/footer.html" %}
+        </div>
+
+        <!-- Scripts are placed at the end of the document so the pages load faster -->
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//cdn.firebase.com/js/client/1.1.1/firebase.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/path.js/0.8.4/path.min.js"></script>
+
+        <!-- Startup Framework -->
+        <script src="//cloudcdn.viralapps.no/frameworks/bootstrap/v3.3.0/js/bootstrap.min.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/modernizr.custom.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/page-transitions.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/easing.min.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/jquery.svg.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/jquery.svganim.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/jquery.parallax.min.js"></script>
+        <script src="//cloudcdn.viralapps.no/frameworks/startup/v1.3.1/common-files/js/startup-kit.js"></script>
+        <script src="//cloudcdn.viralapps.no/libraries/moment/moment-with-locales.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js"></script>
+        <script src="//cloudcdn.viralapps.no/libraries/FitText/jquery.fittext.js"></script>
+
+        <!-- Put your JS in here and we'll minify it into one file. No CDN scripts. More info: -->
+        <!-- http://www.webhook.com/docs/minify-your-js-and-css/ -->
+        {# Useful block for loading outside footer scripts in other pages. #}
+        {% block body_extra %}{% endblock %}
+
+        <!-- Google Analytics code. Feel free to remove. -->
+        <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-55673117-1', 'auto');
+        ga('send', 'pageview');
+        </script>
+        {% endblock %}
+    </body>
+</html>
